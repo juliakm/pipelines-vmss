@@ -46,7 +46,7 @@ steps:
       sudo sh install.sh
     storageAccountName: 'vmssstorageaccount2'
     distributeType: 'sig'
-    galleryImageId: '/subscriptions/82c135d4-f813-4bec-a93e-60e4323918ee/resourceGroups/myVMSSResourceGroup/providers/Microsoft.Compute/galleries/myVMSSGallery/images/MyImage/versions/0.0.$(Build.BuildId)'
+    galleryImageId: '/subscriptions/82c135d4-f813-4bec-a93e-60e4323918ee/resourceGroups/myVMSSResourceGroup/providers/Microsoft.Compute/galleries/myVMSSGallery2/images/MyImage/versions/0.0.$(Build.BuildId)'
     replicationRegions: 'eastus2'
     ibSubscription: 'DevOps Pipelines - ARM Horizontal Work(82c135d4-f813-4bec-a93e-60e4323918ee)'
     ibAzureResourceGroup: 'myVMSSResourceGroup'
