@@ -1,0 +1,31 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# Cannot customize image with an artifact built using this pipeline
+
+trigger: none
+
+  
+variables:
+  system.debug: 'true'
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: PackerBuild@1
+  displayName: 'Build Custom Image'
+  inputs:
+    templateType: custom
+    customTemplateLocation: '$(System.DefaultWorkingDirectory)/packer-template2.json'
+    customTemplateParameters: '{"img_name":"vmss-img-$(Build.BuildId)","subscription_id":"afc11291-9826-46be-b852-70349146ddf8","client_id":"06732c5d-c16d-4d16-bff4-45c44016234d","client_secret":"59b5ed22-5e13-4bf9-94fc-a796f89db765","tenant_id":"72f988bf-86f1-41af-91ab-2d7cd011db47"}'
+
+- task: AzureCLI@2
+  displayName: 'Update new image to VMSS'
+  inputs:
+    azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+    scriptType: ps
+    scriptLocation: inlineScript
+    inlineScript: 'az vmss update --resource-group raivmdemo-rg --name rai-packer-image-vmss --set virtualMachineProfile.storageProfile.imageReference.id=/subscriptions/afc11291-9826-46be-b852-70349146ddf8/resourceGroups/raiyan-rg2/providers/Microsoft.Compute/images/vmss-img-$(Build.BuildId)'

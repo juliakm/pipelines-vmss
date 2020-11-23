@@ -1,0 +1,56 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+variables:
+  system.debug: true
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Maven@1
+  displayName: 'Maven $(mavenPOMFile)'
+  inputs:
+    mavenPomFile: 'pom.xml'
+    testResultsFiles: '**/TEST*.xml'
+- task: CopyFiles@2
+  displayName: 'Copy File to: $(TargetFolder)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: |
+     **/*.sh 
+     **/*.war
+     **/*jar-with-dependencies.jar
+    TargetFolder: '$(System.DefaultWorkingDirectory)/pipeline-artifacts/'
+    flattenFolders: true
+
+
+- task: AzureImageBuilderTask@1
+  displayName: 'Azure VM Image Builder Task'
+  inputs:
+    managedIdentity: '/subscriptions/afc11291-9826-46be-b852-70349146ddf8/resourceGroups/raivmdemo-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/rai-identity2'
+    imageSource: 'marketplace'
+    packagePath: '$(System.DefaultWorkingDirectory)/pipeline-artifacts'
+    inlineScript: |      
+      sudo mkdir /lib/buildArtifacts
+      sudo cp  "/tmp/pipeline-artifacts.tar.gz" /lib/buildArtifacts/.
+      cd /lib/buildArtifacts/.
+      sudo tar -zxvf pipeline-artifacts.tar.gz
+      sudo sh install.sh      
+    storageAccountName: 'raivmdemorgdiag'
+    distributeType: 'sig'
+    galleryImageId: '/subscriptions/afc11291-9826-46be-b852-70349146ddf8/resourceGroups/raivmdemo-rg/providers/Microsoft.Compute/galleries/rai_sig_aib/images/raiUbuntuCustom/versions/0.0.$(Build.BuildId)'
+    replicationRegions: 'eastus2'
+    ibSubscription: 'raivmdemo - Azure'
+    ibAzureResourceGroup: 'raivmdemo-rg'
+    ibLocation: 'eastus2'
+- task: AzureCLI@2
+  displayName: 'Update VMSS with Custom Image'
+  inputs:
+    azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az vmss update --resource-group raivmdemo-rg --name rai-vmss2 --set virtualMachineProfile.storageProfile.imageReference.id=/subscriptions/afc11291-9826-46be-b852-70349146ddf8/resourceGroups/raivmdemo-rg/providers/Microsoft.Compute/galleries/rai_sig_aib/images/raiUbuntuCustom/versions/0.0.$(Build.BuildId)'
