@@ -57,4 +57,4 @@ steps:
     azureSubscription: 'DevOps Pipelines - ARM Horizontal Work(82c135d4-f813-4bec-a93e-60e4323918ee)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az vmss update --resource-group myVMSSResourceGroup --name vmssScaleSet2 --set virtualMachineProfile.storageProfile.imageReference.id=/subscriptions/82c135d4-f813-4bec-a93e-60e4323918ee/myVMSSResourceGroup/providers/Microsoft.Compute/images/vmss-image-$(Build.BuildId)'
+    inlineScript: 'az vmss update --resource-group myVMSSResourceGroup --name vmssScaleSet3 --set virtualMachineProfile.storageProfile.imageReference.id=/subscriptions/82c135d4-f813-4bec-a93e-60e4323918ee/myVMSSResourceGroup/providers/Microsoft.Compute/images/vmss-image-$(Build.BuildId)'
