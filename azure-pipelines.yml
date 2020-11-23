@@ -48,6 +48,6 @@ steps:
     distributeType: 'sig'
     galleryImageId: '/subscriptions/82c135d4-f813-4bec-a93e-60e4323918ee/resourceGroups/myVMSSResourceGroup/providers/Microsoft.Compute/galleries/myVMSSGallery/images/MyImage/versions/0.0.$(Build.BuildId)'
     replicationRegions: 'eastus2'
-    ibSubscription: '82c135d4-f813-4bec-a93e-60e4323918ee'
+    ibSubscription: 'DevOps Pipelines - ARM Horizontal Work(82c135d4-f813-4bec-a93e-60e4323918ee)'
     ibAzureResourceGroup: 'myVMSSResourceGroup'
     ibLocation: 'eastus2'
